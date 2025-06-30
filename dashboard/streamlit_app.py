@@ -19,9 +19,15 @@ def load_data():
 df = load_data()
 
 st.sidebar.header("🔍 Filters")
-selected_region = st.sidebar.multiselect("Region", options=df['Region'].unique(), default=df['Region'].unique())
-selected_category = st.sidebar.multiselect("Category", options=df['Category'].unique(), default=df['Category'].unique())
-selected_segment = st.sidebar.multiselect("Segment", options=df['Segment'].unique(), default=df['Segment'].unique())
+
+with st.sidebar.expander("📍 Region"):
+    selected_region = [r for r in df['Region'].unique() if st.checkbox(r, value=True, key=f"region_{r}")]
+
+with st.sidebar.expander("🗂 Category"):
+    selected_category = [c for c in df['Category'].unique() if st.checkbox(c, value=True, key=f"category_{c}")]
+
+with st.sidebar.expander("👥 Segment"):
+    selected_segment = [s for s in df['Segment'].unique() if st.checkbox(s, value=True, key=f"segment_{s}")]
 
 filtered_df = df[(df['Region'].isin(selected_region)) &
                  (df['Category'].isin(selected_category)) &
