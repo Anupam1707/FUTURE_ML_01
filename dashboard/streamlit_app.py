@@ -21,13 +21,25 @@ df = load_data()
 st.sidebar.header("🔍 Filters")
 
 with st.sidebar.expander("📍 Region"):
-    selected_region = [r for r in df['Region'].unique() if st.checkbox(r, value=True, key=f"region_{r}")]
+    all_regions = df['Region'].unique()
+    selected_region = [r for r in all_regions if st.checkbox(r, value=True, key=f"region_{r}")]
+    if len(selected_region) == 0:
+        st.error("⚠️ Please select at least one Region.")
+        st.stop()
 
 with st.sidebar.expander("🗂 Category"):
-    selected_category = [c for c in df['Category'].unique() if st.checkbox(c, value=True, key=f"category_{c}")]
+    all_categories = df['Category'].unique()
+    selected_category = [c for c in all_categories if st.checkbox(c, value=True, key=f"category_{c}")]
+    if len(selected_category) == 0:
+        st.error("⚠️ Please select at least one Category.")
+        st.stop()
 
 with st.sidebar.expander("👥 Segment"):
-    selected_segment = [s for s in df['Segment'].unique() if st.checkbox(s, value=True, key=f"segment_{s}")]
+    all_segments = df['Segment'].unique()
+    selected_segment = [s for s in all_segments if st.checkbox(s, value=True, key=f"segment_{s}")]
+    if len(selected_segment) == 0:
+        st.error("⚠️ Please select at least one Segment.")
+        st.stop()
 
 filtered_df = df[(df['Region'].isin(selected_region)) &
                  (df['Category'].isin(selected_category)) &
