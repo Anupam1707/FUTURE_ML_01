@@ -23,7 +23,7 @@ Develop a time series forecasting model to predict future sales trends based on 
 [sales_data_sample.csv](./data/sales_data_sample.csv)
 
 ## 🌐 Live App
-👉 [Launch Dashboard](https://appapppy-rncb5dvtdmqyvtmdbz7brx.streamlit.app/)
+👉 [Launch Dashboard](https://anupam1707-salesdash.streamlit.app/)
 
 ---
 
