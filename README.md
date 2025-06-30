@@ -1,26 +1,30 @@
-# Task 1: AI-Powered Sales Forecasting Dashboard
+# 📊 Task 1: AI-Powered Sales Forecasting Dashboard
 
-## Objective
-To build a time series forecasting model that predicts future sales trends using historical data.
+## 🎯 Objective
+Develop a time series forecasting model to predict future sales trends based on historical data.
 
-## Tools & Libraries
+## 🛠 Tools & Libraries
 - Python
 - Prophet (by Meta)
 - Pandas, Matplotlib
+- Streamlit (for dashboard deployment)
 
-## Key Skills
+## 🧠 Key Skills Applied
 - Time Series Forecasting
-- Trend & Seasonality Analysis
+- Trend & Seasonality Decomposition
 - Data Visualization
 
-## Output
-- Forecast for next 90 days
-- Component breakdown: trend, seasonality
-- Visual dashboard (optional: Power BI / Streamlit)
+## 📈 Output
+- 90-day sales forecast
+- Visual breakdown of components (trend, seasonality, holiday effects)
+- Interactive web dashboard built with Streamlit
 
-## Dataset
+## 📂 Dataset
 [sales_data_sample.csv](./data/sales_data_sample.csv)
+
+## 🌐 Live App
+👉 [Launch Dashboard](https://appapppy-rncb5dvtdmqyvtmdbz7brx.streamlit.app/)
 
 ---
 
-✅ Completed as part of the Future Interns Machine Learning Fellowship.
+✅ Completed as part of the **Future Interns Machine Learning Fellowship**.
