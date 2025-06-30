@@ -1,41 +1,48 @@
-import streamlit as st
 import pandas as pd
+import streamlit as st
 from prophet import Prophet
-from prophet.plot import plot_plotly, plot_components_plotly
-from io import StringIO
+import matplotlib.pyplot as plt
 
 st.set_page_config(page_title="Sales Forecasting Dashboard", layout="wide")
 st.title("📈 AI-Powered Sales Forecasting Dashboard")
 
-st.markdown("Upload a CSV file with historical sales data to generate future sales predictions.")
+CSV_URL = "https://raw.githubusercontent.com/Anupam1707/FUTURE_ML_01/main/data/sales_data_sample.csv"
 
-uploaded_file = st.file_uploader("Upload sales_data_sample.csv", type=["csv"])
+st.markdown(
+    f"🔗 **Dataset Source:** [sales_data_sample.csv]({CSV_URL})",
+    unsafe_allow_html=True
+)
 
-if uploaded_file is not None:
-    df = pd.read_csv(uploaded_file, encoding='latin1')
-    df['ORDERDATE'] = pd.to_datetime(df['ORDERDATE'], errors='coerce')
-    df = df.dropna(subset=['ORDERDATE'])
+@st.cache_data
+def load_data():
+    return pd.read_csv(CSV_URL, encoding="cp1252")
 
-    daily_sales = df.groupby(df['ORDERDATE'].dt.date)['SALES'].sum().reset_index()
-    daily_sales.columns = ['ds', 'y']
+df = load_data()
 
-    st.subheader("📊 Raw Aggregated Sales Data")
-    st.dataframe(daily_sales.tail())
+df.columns = df.columns.str.strip()
 
-    model = Prophet()
-    model.fit(daily_sales)
+df.rename(columns={"ORDERDATE": "ds", "SALES": "y"}, inplace=True)
 
-    future = model.make_future_dataframe(periods=90)
-    forecast = model.predict(future)
+if "ds" not in df.columns or "y" not in df.columns:
+    st.error("❌ Required columns 'ORDERDATE' and 'SALES' not found.")
+    st.stop()
 
-    st.subheader("🔮 Forecast Plot")
-    fig_forecast = plot_plotly(model, forecast)
-    st.plotly_chart(fig_forecast, use_container_width=True)
+df["ds"] = pd.to_datetime(df["ds"], errors="coerce")
+df.dropna(subset=["ds", "y"], inplace=True)
 
-    st.subheader("📂 Forecast Components")
-    fig_components = plot_components_plotly(model, forecast)
-    st.plotly_chart(fig_components, use_container_width=True)
+st.subheader("📊 Cleaned Sales Data")
+st.dataframe(df[["ds", "y"]].head())
 
-    st.success("Forecasting completed! 🎉")
-else:
-    st.info("👈 Upload your dataset to begin.")
+model = Prophet()
+model.fit(df[["ds", "y"]])
+
+future = model.make_future_dataframe(periods=90)
+forecast = model.predict(future)
+
+st.subheader("🔮 Forecast for Next 90 Days")
+fig1 = model.plot(forecast)
+st.pyplot(fig1)
+
+st.subheader("📉 Forecast Components")
+fig2 = model.plot_components(forecast)
+st.pyplot(fig2)
