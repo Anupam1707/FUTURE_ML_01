@@ -136,6 +136,11 @@ st.download_button(
     mime='text/csv'
 )
 
+forecast_export = forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']]
+forecast_export['ds'] = forecast_export['ds'].dt.date
+actual_sales = daily_sales.rename(columns={'ds': 'ds', 'y': 'actual_sales'})
+forecast_merged = pd.merge(forecast_export, actual_sales, on='ds', how='left')
+
 csv_forecast = forecast_merged.to_csv(index=False)
 st.download_button(
     label="📈 Download Forecast Output (Power BI Ready)",
