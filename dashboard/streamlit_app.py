@@ -119,3 +119,31 @@ st.markdown(f"""
 
 for rec in recommendations:
     st.markdown(f"  - {rec}")
+
+export_df = filtered_df.copy()
+export_df['Year'] = export_df['Order Date'].dt.year
+export_df['Month'] = export_df['Order Date'].dt.strftime('%B')
+export_df['Day'] = export_df['Order Date'].dt.day
+export_df['Month_Num'] = export_df['Order Date'].dt.month
+export_df['Weekday'] = export_df['Order Date'].dt.day_name()
+export_df['IsWeekend'] = export_df['Weekday'].isin(['Saturday', 'Sunday'])
+
+csv_cleaned = export_df.to_csv(index=False)
+st.download_button(
+    label="⬇️ Download Cleaned Dataset (Filtered Superstore)",
+    data=csv_cleaned,
+    file_name='superstore_cleaned.csv',
+    mime='text/csv'
+)
+forecast_export = forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']]
+forecast_export['ds'] = forecast_export['ds'].dt.date
+actual_sales = daily_sales.rename(columns={'ds': 'ds', 'y': 'actual_sales'})
+forecast_merged = pd.merge(forecast_export, actual_sales, on='ds', how='left')
+
+csv_forecast = forecast_merged.to_csv(index=False)
+st.download_button(
+    label="📈 Download Forecast Output (Actual vs Predicted)",
+    data=csv_forecast,
+    file_name='sales_forecast.csv',
+    mime='text/csv'
+)
