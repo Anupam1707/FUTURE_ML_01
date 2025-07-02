@@ -14,6 +14,8 @@ def load_data():
     url = "https://raw.githubusercontent.com/Anupam1707/FUTURE_ML_01/main/data/SampleSuperstore.csv"
     df = pd.read_csv(url)
     df['Order Date'] = pd.to_datetime(df['Order Date'], dayfirst=True)
+    df['Weekday'] = df['Order Date'].dt.day_name()
+    df['IsWeekend'] = df['Weekday'].isin(['Saturday', 'Sunday'])
     return df
 
 df = load_data()
@@ -84,3 +86,36 @@ filtered_df['Year'] = filtered_df['Order Date'].dt.year
 yearly = filtered_df.groupby('Year')['Sales'].sum().reset_index()
 fig_yearly = px.bar(yearly, x='Year', y='Sales', title='Yearly Sales Comparison')
 st.plotly_chart(fig_yearly, use_container_width=True)
+
+st.subheader("📊 Sales by Day of Week")
+weekday_stats = filtered_df.groupby('Weekday')['Sales'].mean().reindex([
+    'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])
+fig_weekday = px.bar(weekday_stats, x=weekday_stats.index, y=weekday_stats.values,
+                     labels={'x': 'Day of Week', 'y': 'Average Sales'},
+                     title='Average Sales by Day of the Week')
+st.plotly_chart(fig_weekday, use_container_width=True)
+
+st.subheader("📌 Business Insights & Recommendations")
+recommendations = []
+
+if high_month != low_month:
+    recommendations.append(f"Increase inventory and marketing during peak months like **Month {high_month}**")
+    recommendations.append(f"Offer promotions or bundles in low-performing months like **Month {low_month}**")
+
+if all(x in filtered_df['IsWeekend'].unique() for x in [True, False]):
+    avg_weekend = filtered_df[filtered_df['IsWeekend'] == True]['Sales'].mean()
+    avg_weekday = filtered_df[filtered_df['IsWeekend'] == False]['Sales'].mean()
+    if avg_weekend > avg_weekday:
+        recommendations.append("Leverage higher weekend sales by scheduling campaigns on Saturdays and Sundays")
+    else:
+        recommendations.append("Strengthen weekday strategies, as they outperform weekends in this segment")
+
+st.markdown(f"""
+- 🛒 **Top-selling product**: `{top_product}`
+- 📆 **Peak sales month**: `Month {high_month}`
+- 📉 **Lowest sales month**: `Month {low_month}`
+- 💡 **Recommendations**:
+""")
+
+for rec in recommendations:
+    st.markdown(f"  - {rec}")
